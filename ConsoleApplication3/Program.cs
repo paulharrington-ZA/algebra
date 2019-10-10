@@ -100,7 +100,7 @@ namespace ConsoleApplication3
 
         }
 
-        static float[,] Gaussian(float[,] matrix)
+        static void Gaussian(float[,] matrix)
         {
             var m = matrix.GetLength(0);
             var n = matrix.GetLength(1);
@@ -134,8 +134,6 @@ namespace ConsoleApplication3
                     }
                 }
             }
-            return matrix;
-
         }
     }
 }
