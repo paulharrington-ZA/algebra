@@ -37,6 +37,11 @@ namespace ConsoleApplication3
             Console.WriteLine("After Gausian");
             PrintMatrix(matrix);
             Console.ReadKey();
+
+            Jordan(matrix);
+            Console.WriteLine("After Gauss-Jordan");
+            PrintMatrix(matrix);
+            Console.ReadKey();
         }
 
         static void PrintMatrix(float[,] matrix)
@@ -128,6 +133,36 @@ namespace ConsoleApplication3
                                 var target = matrix[p,j];
                                 var factor = source/target;
                                 AddRow(matrix,i,p,factor);
+                                break;
+                            }
+                        }
+                        break;
+                    }
+                }
+            }
+        }
+
+        static void Jordan(float[,] matrix)
+        {
+            var m = matrix.GetLength(0);
+            var n = matrix.GetLength(1);
+
+            for (int i = m - 1; i > -1; i--)
+            {
+                for (int j = 0; j < n; j++)
+                {
+                    if (!matrix[i, j].Equals(0))
+                    {
+                        var source = matrix[i, j];
+                        for (int p = i - 1; p > -1; p--)
+                        {
+                            if (p < 0) break;
+                            if (!matrix[p, j].Equals(0))
+                            {
+                                var target = matrix[p, j];
+                                var factor = source / target;
+                                AddRow(matrix, i, p, factor);
+                                break;
                             }
                         }
                         break;
