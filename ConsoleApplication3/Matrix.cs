@@ -9,8 +9,8 @@ namespace ConsoleApplication3
 {
     public class Matrix
     {
-        public float[,] AugmentedMatrix { get; }
-        public float[,] CoeffecientMatrix { get; }
+        public double[,] AugmentedMatrix { get; }
+        public double[,] CoeffecientMatrix { get; }
         public int m
         {
             get
@@ -28,13 +28,13 @@ namespace ConsoleApplication3
                 return AugmentedMatrix.GetLength(1);
             }
         }
-        public Matrix(float[] coeffecients, int n)
+        public Matrix(double[] coeffecients, int n)
         {
 
             if (coeffecients.Length % n != 0) throw new ArgumentException($"Coeffecients are off by {coeffecients.Length % n}");
             var m = coeffecients.Length / n;
-            AugmentedMatrix = new float[m, n];
-            CoeffecientMatrix = new float[m,n - 1];
+            AugmentedMatrix = new double[m, n];
+            CoeffecientMatrix = new double[m,n - 1];
             var l = 0;
             for (int i = 0; i < m; i++)
                 for (int j = 0; j < n; j++)
@@ -48,9 +48,37 @@ namespace ConsoleApplication3
                 }
         }
 
-        public Matrix(Polynomial[] equations)
+        public Matrix(Polynomial system)
         {
+            var coeffecients = new double[(system.Definition.R * system.N) + system.N];
+            var n = system.N;
+            var l = 0;
 
+            foreach (var equation in system.SystemOfEquations)
+            {
+                for (int i = 0; i < equation.R; i++)
+                {
+                    coeffecients[l] = equation.Left[i].FittedValue;
+                    l++;
+                }
+                coeffecients[l] = equation.Y;
+
+                l++;
+            }
+            var m = coeffecients.Length/n;
+            AugmentedMatrix = new double[m, n];
+            CoeffecientMatrix = new double[m, n - 1];
+            l = 0;
+            for (int i = 0; i < m; i++)
+                for (int j = 0; j < n; j++)
+                {
+                    AugmentedMatrix[i, j] = coeffecients[l];
+                    if (j < n - 1)
+                    {
+                        CoeffecientMatrix[i, j] = coeffecients[l];
+                    }
+                    l++;
+                }
         }
         public void PrintMatrix()
         {
@@ -110,30 +138,43 @@ namespace ConsoleApplication3
             }
         }
 
-        public void AddRow(int source, int destination, float factor)
+        public void AddRow(int source, int destination, double factor)
         {
             // get number of columns
             // iterate through columns
             for (var i = 0; i < n; i++)
             {
                 // get multiple
-                float multiple = 0f - ((1f / factor) * AugmentedMatrix[source, i]);
+                double multiple = 0f - ((1f / factor) * AugmentedMatrix[source, i]);
                 // add to destination
                 AugmentedMatrix[destination, i] = AugmentedMatrix[destination, i] + multiple;
             }
 
         }
 
+        private static bool CleanColumn(double[,] matrix, int i, int c)
+        {
+            var clean = true;
+            var m = matrix.GetLength(1);
+            var n = matrix.GetLength(0);
+            for (int k = i + 1; k < m; k++)
+            {
+                if (matrix[k, c].Equals(0)) continue;
+                clean = false;
+                break;
+            }
+            return clean;
+        } 
         public void Gaussian()
         {
-
+            var coveredRow = 0;
             for (int i = 0; i < m; i++)
             {
                 for (int j = 0; j < n; j++)
                 {
-                    if (AugmentedMatrix[i, j].Equals(1)) break;
+                    //if (AugmentedMatrix[i, j].Equals(1)) break;
 
-                    if (!AugmentedMatrix[i, j].Equals(0))
+                    if (!AugmentedMatrix[i, j].Equals(0) && i > coveredRow)
                     {
                         var source = AugmentedMatrix[i, j];
                         if (!source.Equals(1))
@@ -150,12 +191,13 @@ namespace ConsoleApplication3
                                 var target = AugmentedMatrix[p, j];
                                 var factor = source / target;
                                 AddRow(i, p, factor);
-                                break;
                             }
                         }
-                        break;
+
                     }
                 }
+
+                coveredRow++;
             }
         }
 

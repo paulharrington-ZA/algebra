@@ -11,7 +11,21 @@ namespace ConsoleApplication3
     {
         static void Main(string[] args)
         {
-            var matrix = new Matrix(new float[] {0,2,2,1,0,2,1,1,1,2,4,6}, 4);
+            Console.OutputEncoding = Encoding.Unicode;
+            var poly = new Polynomial(4);
+            poly.Definition.Print();
+            Console.ReadKey();
+            poly.Fit(new[]
+            {
+                new Polynomial.Point(-3,-2), 
+                new Polynomial.Point(-1,1), 
+                new Polynomial.Point(2,4), 
+                new Polynomial.Point(4,2), 
+            });
+
+            poly.PrintEquations();
+            poly.Matrix.PrintMatrix();
+            var matrix = poly.Matrix;
             var leading = matrix.FindLeadingVar();
             Console.WriteLine("Original Matrix");
             matrix.PrintMatrix();
