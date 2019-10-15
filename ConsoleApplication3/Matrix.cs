@@ -1,9 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Web;
+using System.Runtime.InteropServices;
 
 namespace ConsoleApplication3
 {
@@ -34,7 +31,7 @@ namespace ConsoleApplication3
             if (coeffecients.Length % n != 0) throw new ArgumentException($"Coeffecients are off by {coeffecients.Length % n}");
             var m = coeffecients.Length / n;
             AugmentedMatrix = new double[m, n];
-            CoeffecientMatrix = new double[m,n - 1];
+            CoeffecientMatrix = new double[m, n - 1];
             var l = 0;
             for (int i = 0; i < m; i++)
                 for (int j = 0; j < n; j++)
@@ -65,7 +62,7 @@ namespace ConsoleApplication3
 
                 l++;
             }
-            var m = coeffecients.Length/n;
+            var m = coeffecients.Length / n;
             AugmentedMatrix = new double[m, n];
             CoeffecientMatrix = new double[m, n - 1];
             l = 0;
@@ -111,20 +108,19 @@ namespace ConsoleApplication3
         }
         public int FindLeadingVar()
         {
-            var leading = new Tuple<int, int>(0, 0);
+            var ln = 0;
+            var leads = new LeadingVar[m];
             for (int i = 0; i < m; i++)
             {
-                for (int j = 0; j < n; j++)
+                while (AugmentedMatrix[i, ln].Equals(0))
                 {
-                    if (!AugmentedMatrix[i, j].Equals(0) && j <= leading.Item2)
-                    {
-                        leading = new Tuple<int, int>(i, j);
-                        i++;
-                        break;
-                    }
+                    ln++;
                 }
+                leads[i] = new LeadingVar(i, ln);
             }
-            return leading.Item1;
+
+            var sorted = leads.OrderBy(l => l.VarIndex);
+            return sorted.First().RowIndex;
         }
 
         public void SwitchRow(int source, int destination)
@@ -138,7 +134,7 @@ namespace ConsoleApplication3
             }
         }
 
-        public void AddRow(int source, int destination, double factor)
+        public void FactorRow(int source, int destination, double factor)
         {
             // get number of columns
             // iterate through columns
@@ -164,42 +160,63 @@ namespace ConsoleApplication3
                 break;
             }
             return clean;
-        } 
-        public void Gaussian()
+        }
+
+        public struct LeadingVar
         {
-            var coveredRow = 0;
-            for (int i = 0; i < m; i++)
+            public int RowIndex;
+            public int VarIndex;
+
+            public LeadingVar(int rowIndex, int varIndex)
             {
-                for (int j = 0; j < n; j++)
-                {
-                    //if (AugmentedMatrix[i, j].Equals(1)) break;
+                RowIndex = rowIndex;
+                VarIndex = varIndex;
+            }
+            public override bool Equals(object obj)
+            {
+                if (obj == null) return false;
+                var struc = (LeadingVar)obj;
+                return struc.VarIndex == VarIndex;
+            }
 
-                    if (!AugmentedMatrix[i, j].Equals(0) && i > coveredRow)
-                    {
-                        var source = AugmentedMatrix[i, j];
-                        if (!source.Equals(1))
-                        {
-                            AddRow(i, i, source);
-                        }
-                        // reassign source incase it changed
-                        source = AugmentedMatrix[i, j];
-                        for (int p = i + 1; p < m; p++)
-                        {
-                            if (p > m) break;
-                            if (!AugmentedMatrix[p, j].Equals(0))
-                            {
-                                var target = AugmentedMatrix[p, j];
-                                var factor = source / target;
-                                AddRow(i, p, factor);
-                            }
-                        }
-
-                    }
-                }
-
-                coveredRow++;
+            public override int GetHashCode()
+            {
+                return base.GetHashCode();
             }
         }
+        public void Gaussian()
+        {
+
+            for (int i = 0; i < m; i++)
+            {
+                // get the index of the leading variable
+                var j = 0;
+                var r = AugmentedMatrix.GetRow(i);
+                while (r[j].Equals(0)) j++;
+
+                var source = AugmentedMatrix[i, j];
+                // check if the leading var of the row is one
+                if (!source.Equals(1))
+                {
+                    // if not, factor the row by itself with a factor of 1 / leading var
+                    FactorRow(i, i, source);
+                }
+                // reassign source incase it changed, we should now have a leading factor of 1
+                source = AugmentedMatrix[i, j];
+                var clean = CleanColumn(AugmentedMatrix, i, j);
+                if (!clean)
+                    for (int p = i + 1; p < m; p++)
+                    {
+                        if (!AugmentedMatrix[p, j].Equals(0))
+                        {
+                            var target = AugmentedMatrix[p, j];
+                            var factor = source / target;
+                            FactorRow(i, p, factor);
+                        }
+                    }
+            }
+        }
+
 
         public void Jordan()
         {
@@ -218,7 +235,7 @@ namespace ConsoleApplication3
                             {
                                 var target = AugmentedMatrix[p, j];
                                 var factor = source / target;
-                                AddRow(i, p, factor);
+                                FactorRow(i, p, factor);
                             }
                         }
                         break;
@@ -227,4 +244,34 @@ namespace ConsoleApplication3
             }
         }
     }
+
+    // copied from stack overflow
+    public static class ArrayExt
+    {
+        public static T[] GetRow<T>(this T[,] array, int row)
+        {
+            if (!typeof(T).IsPrimitive)
+                throw new InvalidOperationException("Not supported for managed types.");
+
+            if (array == null)
+                throw new ArgumentNullException("array");
+
+            int cols = array.GetUpperBound(1) + 1;
+            T[] result = new T[cols];
+
+            int size;
+
+            if (typeof(T) == typeof(bool))
+                size = 1;
+            else if (typeof(T) == typeof(char))
+                size = 2;
+            else
+                size = Marshal.SizeOf<T>();
+
+            Buffer.BlockCopy(array, row * cols * size, result, 0, cols * size);
+
+            return result;
+        }
+    }
+
 }

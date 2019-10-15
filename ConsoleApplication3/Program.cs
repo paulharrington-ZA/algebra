@@ -17,10 +17,9 @@ namespace ConsoleApplication3
             Console.ReadKey();
             poly.Fit(new[]
             {
-                new Polynomial.Point(-3,-2), 
-                new Polynomial.Point(-1,1), 
-                new Polynomial.Point(2,4), 
-                new Polynomial.Point(4,2), 
+                new Polynomial.Point(1,4), 
+                new Polynomial.Point(2,0), 
+                new Polynomial.Point(3,12), 
             });
 
             poly.PrintEquations();

@@ -42,8 +42,9 @@ namespace ConsoleApplication3
                 {
                     t.Print(fitted);
                 }
-                Console.Write("=");
+                Console.Write("= ");
                 
+                Console.Write(Y);
 
                 Console.WriteLine();
             }
