@@ -39,11 +39,11 @@ namespace IOWindow
             }
 
             Points.Add(new Polynomial.Point(x,y));
-
+            ReCalculate();
             Render();
         }
 
-        private void Render()
+        private void ReCalculate()
         {
             PointsListBox.Items.Clear();
             foreach (var point in Points)
@@ -51,8 +51,13 @@ namespace IOWindow
 
             PolynomialFunction = new Polynomial(Points.Count);
             PolynomialFunction.Fit(Points.ToArray());
+        }
+
+        private void Render()
+        {
+
             EquationsRichTextBox.Text = PolynomialFunction.PrintEquations(FittedCheckBox.Checked);
-            
+            MatrixRichTextBox.Text = PolynomialFunction.Matrix.PrintMatrix();
         }
 
         private void RemovePointButton_Click(object sender, EventArgs e)
@@ -64,12 +69,24 @@ namespace IOWindow
             }
 
             Points.RemoveAt(PointsListBox.SelectedIndex);
-
+            ReCalculate();
             Render();
         }
 
         private void FittedCheckBox_CheckedChanged(object sender, EventArgs e)
         {
+            Render();
+        }
+
+        private void GaussianButton_Click(object sender, EventArgs e)
+        {
+            PolynomialFunction.Matrix.Gaussian();
+            Render();
+        }
+
+        private void JordanButton_Click(object sender, EventArgs e)
+        {
+            PolynomialFunction.Matrix.Jordan();
             Render();
         }
     }

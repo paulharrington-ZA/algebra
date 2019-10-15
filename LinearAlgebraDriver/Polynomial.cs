@@ -12,8 +12,9 @@ namespace ConsoleApplication3
         public Equation Definition { get; }
 
         public Equation[] SystemOfEquations { get; private set; }
+        private Matrix _matrix;
 
-        public Matrix Matrix => new Matrix(this);
+        public Matrix Matrix => _matrix ?? (_matrix = new Matrix(this));
 
         public Polynomial(int n)
         {

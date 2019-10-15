@@ -1,6 +1,8 @@
 ﻿using System;
+using System.CodeDom;
 using System.Linq;
 using System.Runtime.InteropServices;
+using System.Text;
 
 namespace ConsoleApplication3
 {
@@ -48,48 +50,38 @@ namespace ConsoleApplication3
         public Matrix(Polynomial system)
         {
             var coeffecients = new double[(system.Definition.R * system.N) + system.N];
-            var n = system.N;
+            var n = system.N + 1;
             var l = 0;
-
-            foreach (var equation in system.SystemOfEquations)
-            {
-                for (int i = 0; i < equation.R; i++)
-                {
-                    coeffecients[l] = equation.Left[i].FittedValue;
-                    l++;
-                }
-                coeffecients[l] = equation.Y;
-
-                l++;
-            }
-            var m = coeffecients.Length / n;
-            AugmentedMatrix = new double[m, n];
+            var m = system.SystemOfEquations.Length;
+            AugmentedMatrix = new double[system.SystemOfEquations.Length, n];
             CoeffecientMatrix = new double[m, n - 1];
-            l = 0;
             for (int i = 0; i < m; i++)
-                for (int j = 0; j < n; j++)
+            {
+                var equation = system.SystemOfEquations[i];
+                for (int j = 0; j < equation.Left.Length; j++)
                 {
-                    AugmentedMatrix[i, j] = coeffecients[l];
-                    if (j < n - 1)
-                    {
-                        CoeffecientMatrix[i, j] = coeffecients[l];
-                    }
-                    l++;
+                    AugmentedMatrix[i, j] = equation.Left[j].FittedValue;
+                    if (j < CoeffecientMatrix.GetLength(1))
+                        CoeffecientMatrix[i, j] = equation.Left[j].FittedValue;
                 }
+                AugmentedMatrix[i, equation.R] = equation.Y;
+            }
         }
-        public void PrintMatrix()
+
+        public string PrintMatrix()
         {
+            var sb = new StringBuilder();
             for (int i = 0; i < m; i++)
             {
                 for (int j = 0; j < n; j++)
                 {
-                    Console.Write(AugmentedMatrix[i, j]);
-                    if (j < n - 1) Console.Write(", ");
+                    sb.Append(AugmentedMatrix[i, j]);
+                    if (j < n - 1) sb.Append(", ");
                 }
-                Console.WriteLine();
+                sb.AppendLine();
             }
 
-            Console.ReadKey();
+            return sb.ToString();
         }
 
         public void PrintCoeffecientMatrix()
@@ -148,11 +140,11 @@ namespace ConsoleApplication3
 
         }
 
-        private static bool CleanColumn(double[,] matrix, int i, int c)
+        private bool CleanColumn(double[,] matrix, int i, int c)
         {
             var clean = true;
-            var m = matrix.GetLength(1);
-            var n = matrix.GetLength(0);
+            var m = matrix.GetLength(0);
+            var n = matrix.GetLength(1);
             for (int k = i + 1; k < m; k++)
             {
                 if (matrix[k, c].Equals(0)) continue;

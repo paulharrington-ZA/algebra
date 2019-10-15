@@ -37,6 +37,9 @@
             this.RemovePointButton = new System.Windows.Forms.Button();
             this.EquationsRichTextBox = new System.Windows.Forms.RichTextBox();
             this.FittedCheckBox = new System.Windows.Forms.CheckBox();
+            this.MatrixRichTextBox = new System.Windows.Forms.RichTextBox();
+            this.GaussianButton = new System.Windows.Forms.Button();
+            this.JordanButton = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // xValueTextBox
@@ -118,11 +121,42 @@
             this.FittedCheckBox.UseVisualStyleBackColor = true;
             this.FittedCheckBox.CheckedChanged += new System.EventHandler(this.FittedCheckBox_CheckedChanged);
             // 
-            // Form1
+            // MatrixRichTextBox
+            // 
+            this.MatrixRichTextBox.Location = new System.Drawing.Point(3, 261);
+            this.MatrixRichTextBox.Name = "MatrixRichTextBox";
+            this.MatrixRichTextBox.Size = new System.Drawing.Size(147, 123);
+            this.MatrixRichTextBox.TabIndex = 9;
+            this.MatrixRichTextBox.Text = "";
+            // 
+            // GaussianButton
+            // 
+            this.GaussianButton.Location = new System.Drawing.Point(157, 125);
+            this.GaussianButton.Name = "GaussianButton";
+            this.GaussianButton.Size = new System.Drawing.Size(75, 23);
+            this.GaussianButton.TabIndex = 10;
+            this.GaussianButton.Text = "Gaussian";
+            this.GaussianButton.UseVisualStyleBackColor = true;
+            this.GaussianButton.Click += new System.EventHandler(this.GaussianButton_Click);
+            // 
+            // JordanButton
+            // 
+            this.JordanButton.Location = new System.Drawing.Point(157, 155);
+            this.JordanButton.Name = "JordanButton";
+            this.JordanButton.Size = new System.Drawing.Size(75, 23);
+            this.JordanButton.TabIndex = 11;
+            this.JordanButton.Text = "Jordan";
+            this.JordanButton.UseVisualStyleBackColor = true;
+            this.JordanButton.Click += new System.EventHandler(this.JordanButton_Click);
+            // 
+            // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(497, 396);
+            this.Controls.Add(this.JordanButton);
+            this.Controls.Add(this.GaussianButton);
+            this.Controls.Add(this.MatrixRichTextBox);
             this.Controls.Add(this.FittedCheckBox);
             this.Controls.Add(this.EquationsRichTextBox);
             this.Controls.Add(this.RemovePointButton);
@@ -132,7 +166,7 @@
             this.Controls.Add(this.label1);
             this.Controls.Add(this.yValueTextBox);
             this.Controls.Add(this.xValueTextBox);
-            this.Name = "Form1";
+            this.Name = "MainForm";
             this.Text = "Form1";
             this.ResumeLayout(false);
             this.PerformLayout();
@@ -150,6 +184,9 @@
         private System.Windows.Forms.Button RemovePointButton;
         private System.Windows.Forms.RichTextBox EquationsRichTextBox;
         private System.Windows.Forms.CheckBox FittedCheckBox;
+        private System.Windows.Forms.RichTextBox MatrixRichTextBox;
+        private System.Windows.Forms.Button GaussianButton;
+        private System.Windows.Forms.Button JordanButton;
     }
 }
 
