@@ -10,7 +10,7 @@ namespace ConsoleApplication3
     {
         public double[,] AugmentedMatrix { get; }
         public double[,] CoeffecientMatrix { get; }
-        public int m
+        public int M
         {
             get
             {
@@ -19,7 +19,7 @@ namespace ConsoleApplication3
             }
         }
 
-        public int n
+        public int N
         {
             get
             {
@@ -71,11 +71,29 @@ namespace ConsoleApplication3
         public string PrintMatrix()
         {
             var sb = new StringBuilder();
+            for (int i = 0; i < M; i++)
+            {
+                for (int j = 0; j < N; j++)
+                {
+                    sb.Append(AugmentedMatrix[i, j]);
+                    if (j < N - 1) sb.Append(", ");
+                }
+                sb.AppendLine();
+            }
+
+            return sb.ToString();
+        }
+
+        public static string PrintMatrix(double[,] matrix)
+        {
+            var m = matrix.GetLength(0);
+            var n = matrix.GetLength(1);
+            var sb = new StringBuilder();
             for (int i = 0; i < m; i++)
             {
                 for (int j = 0; j < n; j++)
                 {
-                    sb.Append(AugmentedMatrix[i, j]);
+                    sb.Append(matrix[i, j]);
                     if (j < n - 1) sb.Append(", ");
                 }
                 sb.AppendLine();
@@ -86,12 +104,12 @@ namespace ConsoleApplication3
 
         public void PrintCoeffecientMatrix()
         {
-            for (int i = 0; i < m; i++)
+            for (int i = 0; i < M; i++)
             {
-                for (int j = 0; j < n - 1; j++)
+                for (int j = 0; j < N - 1; j++)
                 {
                     Console.Write(CoeffecientMatrix[i, j]);
-                    if (j < n - 1) Console.Write(", ");
+                    if (j < N - 1) Console.Write(", ");
                 }
                 Console.WriteLine();
             }
@@ -101,8 +119,8 @@ namespace ConsoleApplication3
         public int FindLeadingVar()
         {
             var ln = 0;
-            var leads = new LeadingVar[m];
-            for (int i = 0; i < m; i++)
+            var leads = new LeadingVar[M];
+            for (int i = 0; i < M; i++)
             {
                 while (AugmentedMatrix[i, ln].Equals(0))
                 {
@@ -118,7 +136,7 @@ namespace ConsoleApplication3
         public void SwitchRow(int source, int destination)
         {
 
-            for (int i = 0; i < m; i++)
+            for (int i = 0; i < M; i++)
             {
                 var ce = AugmentedMatrix[destination, i];
                 AugmentedMatrix[destination, i] = AugmentedMatrix[source, i];
@@ -130,7 +148,7 @@ namespace ConsoleApplication3
         {
             // get number of columns
             // iterate through columns
-            for (var i = 0; i < n; i++)
+            for (var i = 0; i < N; i++)
             {
                 // get multiple
                 double multiple = 0f - ((1f / factor) * AugmentedMatrix[source, i]);
@@ -179,7 +197,7 @@ namespace ConsoleApplication3
         public void Gaussian()
         {
 
-            for (int i = 0; i < m; i++)
+            for (int i = 0; i < M; i++)
             {
                 // get the index of the leading variable
                 var j = 0;
@@ -197,7 +215,7 @@ namespace ConsoleApplication3
                 source = AugmentedMatrix[i, j];
                 var clean = CleanColumn(AugmentedMatrix, i, j);
                 if (!clean)
-                    for (int p = i + 1; p < m; p++)
+                    for (int p = i + 1; p < M; p++)
                     {
                         if (!AugmentedMatrix[p, j].Equals(0))
                         {
@@ -213,9 +231,9 @@ namespace ConsoleApplication3
         public void Jordan()
         {
 
-            for (int i = m - 1; i > -1; i--)
+            for (int i = M - 1; i > -1; i--)
             {
-                for (int j = 0; j < n; j++)
+                for (int j = 0; j < N; j++)
                 {
                     if (!AugmentedMatrix[i, j].Equals(0))
                     {
@@ -234,6 +252,45 @@ namespace ConsoleApplication3
                     }
                 }
             }
+        }
+
+        public void Add(double[,] matrix)
+        {
+            var aM = matrix.GetLength(0);
+            var aN = matrix.GetLength(1);
+            if (aM != M || aN != N)
+                throw new Exception("Matrices must be same size to be added");
+
+            for (int i = 0; i < M; i++)
+                for (int j = 0; j < N; j++)
+                {
+                    AugmentedMatrix[i, j] += matrix[i, j];
+                }
+        }
+
+        private double GetMultipleValue(double[,] A, double[,] B, int row, int col)
+        {
+            double total = 0;
+            for (int i = 0; i < B.GetLength(1); i++)
+                total += A[row, i]*B[col, i];
+            return total;
+        }
+
+        public double[,] Multiply(double[,] matrix)
+        {
+            var aM = matrix.GetLength(0);
+            var aN = matrix.GetLength(1);
+            if (aM != N) return null;
+
+            var resultMatrix = new double[M, aN];
+
+            for (int i = 0; i < M; i++)
+                for (int j = 0; j < aN; j++)
+                {
+                    resultMatrix[i, j] = GetMultipleValue(AugmentedMatrix, matrix, i, j);
+                }
+
+            return resultMatrix;
         }
     }
 

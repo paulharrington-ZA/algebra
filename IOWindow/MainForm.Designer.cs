@@ -40,6 +40,8 @@
             this.MatrixRichTextBox = new System.Windows.Forms.RichTextBox();
             this.GaussianButton = new System.Windows.Forms.Button();
             this.JordanButton = new System.Windows.Forms.Button();
+            this.MultiplyTextBox = new System.Windows.Forms.RichTextBox();
+            this.MultiplyButton = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // xValueTextBox
@@ -48,6 +50,7 @@
             this.xValueTextBox.Name = "xValueTextBox";
             this.xValueTextBox.Size = new System.Drawing.Size(100, 20);
             this.xValueTextBox.TabIndex = 0;
+            this.xValueTextBox.Enter += new System.EventHandler(this.xValueTextBox_Enter);
             // 
             // yValueTextBox
             // 
@@ -55,6 +58,7 @@
             this.yValueTextBox.Name = "yValueTextBox";
             this.yValueTextBox.Size = new System.Drawing.Size(100, 20);
             this.yValueTextBox.TabIndex = 1;
+            this.yValueTextBox.Enter += new System.EventHandler(this.yValueTextBox_Enter);
             // 
             // label1
             // 
@@ -149,11 +153,31 @@
             this.JordanButton.UseVisualStyleBackColor = true;
             this.JordanButton.Click += new System.EventHandler(this.JordanButton_Click);
             // 
+            // MultiplyTextBox
+            // 
+            this.MultiplyTextBox.Location = new System.Drawing.Point(239, 261);
+            this.MultiplyTextBox.Name = "MultiplyTextBox";
+            this.MultiplyTextBox.Size = new System.Drawing.Size(147, 123);
+            this.MultiplyTextBox.TabIndex = 12;
+            this.MultiplyTextBox.Text = "";
+            // 
+            // MultiplyButton
+            // 
+            this.MultiplyButton.Location = new System.Drawing.Point(157, 185);
+            this.MultiplyButton.Name = "MultiplyButton";
+            this.MultiplyButton.Size = new System.Drawing.Size(75, 23);
+            this.MultiplyButton.TabIndex = 13;
+            this.MultiplyButton.Text = "Multiply";
+            this.MultiplyButton.UseVisualStyleBackColor = true;
+            this.MultiplyButton.Click += new System.EventHandler(this.MultiplyButton_Click);
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(497, 396);
+            this.Controls.Add(this.MultiplyButton);
+            this.Controls.Add(this.MultiplyTextBox);
             this.Controls.Add(this.JordanButton);
             this.Controls.Add(this.GaussianButton);
             this.Controls.Add(this.MatrixRichTextBox);
@@ -187,6 +211,8 @@
         private System.Windows.Forms.RichTextBox MatrixRichTextBox;
         private System.Windows.Forms.Button GaussianButton;
         private System.Windows.Forms.Button JordanButton;
+        private System.Windows.Forms.RichTextBox MultiplyTextBox;
+        private System.Windows.Forms.Button MultiplyButton;
     }
 }
 

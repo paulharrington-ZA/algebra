@@ -41,6 +41,7 @@ namespace IOWindow
             Points.Add(new Polynomial.Point(x,y));
             ReCalculate();
             Render();
+            xValueTextBox.Focus();
         }
 
         private void ReCalculate()
@@ -71,6 +72,7 @@ namespace IOWindow
             Points.RemoveAt(PointsListBox.SelectedIndex);
             ReCalculate();
             Render();
+            xValueTextBox.Focus();
         }
 
         private void FittedCheckBox_CheckedChanged(object sender, EventArgs e)
@@ -88,6 +90,23 @@ namespace IOWindow
         {
             PolynomialFunction.Matrix.Jordan();
             Render();
+        }
+
+        private void MultiplyButton_Click(object sender, EventArgs e)
+        {
+            var result = PolynomialFunction.Matrix.Multiply(PolynomialFunction.Matrix.AugmentedMatrix);
+            if (result == null) MultiplyTextBox.Text = @"Undefined";
+            MultiplyTextBox.Text = Matrix.PrintMatrix(result);
+        }
+
+        private void xValueTextBox_Enter(object sender, EventArgs e)
+        {
+            xValueTextBox.SelectAll();
+        }
+
+        private void yValueTextBox_Enter(object sender, EventArgs e)
+        {
+            yValueTextBox.SelectAll();
         }
     }
 }
