@@ -22,7 +22,7 @@ namespace ConsoleApplication3
                 new Polynomial.Point(3,12), 
             });
 
-            poly.PrintEquations();
+            Console.WriteLine(poly.PrintEquations());
             poly.Matrix.PrintMatrix();
             var matrix = poly.Matrix;
             var leading = matrix.FindLeadingVar();

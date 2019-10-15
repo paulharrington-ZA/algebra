@@ -17,37 +17,7 @@ namespace ConsoleApplication3
 
         public Polynomial(int n)
         {
-            Definition = new Equation(n - 1);
-        }
-        public class Equation
-        {
-            public Atom[] Left { get; }
-            public Atom[] Right { get; }
-            public int R { get; set; }
-            public double Y { get; set; }
-
-            public Equation(int r)
-            {
-                Left = new Atom[r];
-                for (int i = 0; i < r; i++)
-                {
-                    Left[i] = new Atom(i);
-                }
-
-                R = r;
-            }
-            public void Print(bool fitted = false)
-            {
-                foreach (Atom t in Left)
-                {
-                    t.Print(fitted);
-                }
-                Console.Write("= ");
-                
-                Console.Write(Y);
-
-                Console.WriteLine();
-            }
+            Definition = new Equation(n);
         }
 
         public void Fit(Point[] points)
@@ -69,13 +39,22 @@ namespace ConsoleApplication3
 
             N = points.Length;
         }
+        public string PrintEquations(bool fitted = false)
+        {
+            var sb = new StringBuilder();
+            foreach (var equation in SystemOfEquations)
+            {
+                sb.AppendLine(equation.Print(fitted));
+            }
 
+            return sb.ToString();
+        }
         public class Atom
         {
             private readonly Dictionary<int, string> _subScriptUnicodes = new Dictionary<int, string>
         {
             {0, "\u2080" },
-            {1, "\u00b9" },
+            {1, "\u2081" },
             {2, "\u2082" },
             {3, "\u2083" },
             {4, "\u2084" },
@@ -88,7 +67,7 @@ namespace ConsoleApplication3
             private readonly Dictionary<int, string> _superScriptUnicodes = new Dictionary<int, string>
         {
             {0, "\xB0" },
-            {1, "\xB1" },
+            {1, "\u00b9" },
             {2, "\xB2" },
             {3, "\xB3" },
             {4, "\xB4" },
@@ -112,12 +91,12 @@ namespace ConsoleApplication3
 
             public double FittedValue => Math.Pow(VariableValue, Order);
 
-            public void Print(bool fitted = false)
+            public string Print(bool fitted = false)
             {
                 var output = !fitted ? 
-                    Order > 0 ? $" a{_subScriptUnicodes[Order]}{Variable}{_superScriptUnicodes[Order]}" : $" a{_subScriptUnicodes[Order]}"
-                    : Order > 0 ? $" a{_subScriptUnicodes[Order]}{FittedValue}" : $" a{_subScriptUnicodes[Order]}";
-                Console.Write(output);
+                    Order > 0 ? $"a{_subScriptUnicodes[Order]}{Variable}{_superScriptUnicodes[Order]}" : $" a{_subScriptUnicodes[Order]}"
+                    : Order > 0 ? $"a{_subScriptUnicodes[Order]}({FittedValue})" : $" a{_subScriptUnicodes[Order]}";
+                return output;
             }
         }
 
@@ -131,15 +110,49 @@ namespace ConsoleApplication3
                 X = x;
                 Y = y;
             }
-        }
 
-        public void PrintEquations()
-        {
-            foreach (var equation in SystemOfEquations)
+            public override string ToString()
             {
-                equation.Print(true);
+                return $"({X}, {Y})";
             }
         }
+        public class Equation
+        {
+            public Atom[] Left { get; }
+            public Atom[] Right { get; }
+            public int R { get; set; }
+            public double Y { get; set; }
+
+            public Equation(int r)
+            {
+                Left = new Atom[r];
+                for (int i = 0; i < r; i++)
+                {
+                    Left[i] = new Atom(i);
+                }
+
+                R = r;
+            }
+            public string Print(bool fitted = false)
+            {
+                var sb = new StringBuilder();
+                if (!fitted) sb.Append("p(x) = ");
+                for (int i = 0; i < Left.Length; i++)
+                {
+                    Atom t = Left[i];
+                    sb.Append(t.Print(fitted));
+                    if (i < Left.Length - 1) sb.Append(" + ");
+                }
+                sb.Append("= ");
+
+                sb.Append(Y);
+
+                sb.AppendLine();
+
+                return sb.ToString();
+            }
+        }
+        
     }
 
     
